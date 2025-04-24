@@ -21,7 +21,7 @@ public class Hub extends Building {
     private final Player owner;
 
     public Hub(Player owner) {
-        super("Хаб", 25, owner.getOwnerType());
+        super("Хаб", 25, Integer.MAX_VALUE, owner.getOwnerType());
         this.shop = new Shop<>(owner, createAvailableItems());
         this.owner = owner;
     }

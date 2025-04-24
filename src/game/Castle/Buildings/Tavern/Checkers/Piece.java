@@ -1,5 +1,7 @@
 package game.Castle.Buildings.Tavern.Checkers;
 
+import game.Player.OwnerType;
+
 public class Piece {
     private PieceType type;
     private int x, y;
@@ -15,10 +17,6 @@ public class Piece {
     // Геттеры
     public PieceType getPieceType() {
         return type;
-    }
-
-    public String getSymbol() {
-        return type.getSymbol();
     }
 
     public int getX() {
@@ -51,5 +49,11 @@ public class Piece {
     @Override
     public String toString() {
         return type.getSymbol();
+    }
+
+    public OwnerType getOwner() {
+        if (type == PieceType.BLUE || type == PieceType.BLUE_KING)
+            return OwnerType.PERSON;
+        return OwnerType.COMPUTER;
     }
 }

@@ -1,6 +1,7 @@
 package game.Castle.Buildings.Tavern;
 
 import game.Castle.Buildings.Building;
+import game.Castle.Buildings.Tavern.Checkers.Checkers;
 import game.Castle.Shop;
 import game.Player.Entities.Hero;
 import game.Player.Entities.Entity;
@@ -17,7 +18,7 @@ public class Tavern extends Building {
     private final Player owner;
 
     public Tavern(Player owner) {
-        super("Таверна", 50, owner.getOwnerType()); // Вызов конструктора Building
+        super("Таверна", 50, Integer.MAX_VALUE, owner.getOwnerType()); // Вызов конструктора Building
         this.shop = new Shop<>(owner, createAvailableItems());
         this.owner = owner;
     }
@@ -62,8 +63,11 @@ public class Tavern extends Building {
             switch (selected) {
                 case 1:
                     buyHero();
+                    break;
                 case 2:
-                    BuildingMenu.println("Start SHASHKI");
+                    BuildingMenu.println("Играть в Шашки");
+                    new Checkers(6).start();
+                    break;
             }
             BuildingMenu.println("1 - Купить героя\t\t2 - Поиграть в шашки\t\t0 - Выход");
             selected = InputHandler.getIntInput();

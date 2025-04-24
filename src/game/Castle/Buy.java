@@ -5,7 +5,7 @@ import game.Player.OwnerType;
 import java.io.Serializable;
 
 public class Buy implements Serializable {
-    private final String name;
+    protected final String name;
     private final int cost;
     private OwnerType owner;
 

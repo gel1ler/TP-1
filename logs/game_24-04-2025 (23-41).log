@@ -1,0 +1,12 @@
+апр. 24, 2025 11:41:49 PM game.Utils.Logs.GameLogger warn
+WARNING: Неверный выбор.
+апр. 24, 2025 11:41:49 PM game.Utils.Logs.GameLogger warn
+WARNING: Неверный выбор
+апр. 24, 2025 11:41:53 PM game.Utils.Logs.GameLogger warn
+WARNING: Попытка выйти за границы доски: (4, 2)
+апр. 24, 2025 11:42:34 PM game.Utils.Logs.GameLogger warn
+WARNING: Попытка выйти за границы доски: (4, 0)
+апр. 24, 2025 11:42:45 PM game.Utils.Logs.GameLogger warn
+WARNING: Попытка выйти за границы доски: (3, -1)
+апр. 24, 2025 11:42:45 PM game.Utils.Logs.GameLogger warn
+WARNING: Попытка выйти за границы доски: (4, 0)

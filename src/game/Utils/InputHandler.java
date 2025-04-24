@@ -45,12 +45,8 @@ public class InputHandler {
             Menu.print("> ");
             return scanner.nextInt();
         } catch (Exception e) {
-            if (checkForSaveCommand()) {
-                Menu.println("Game Saved");
-                Menu.print("> ");
-            } else {
+            if (!checkForSaveCommand())
                 invalidInput();
-            }
             return getIntInput();
         } finally {
             currentDepth--;
@@ -75,7 +71,13 @@ public class InputHandler {
             String input = scanner.nextLine().trim();
             if ("SAVE".equalsIgnoreCase(input)) {
                 Menu.println("Сохранение игры...");
-                saveGame(false);
+                boolean saved = saveGame(false);
+
+                if (!saved) {
+                    Menu.errorMessage("Вы пытаетесь сохранить игру, которая еще не началась!");
+                    return false;
+                }
+
                 Menu.println("Игра сохранена в файл!");
                 return true;
             }

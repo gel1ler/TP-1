@@ -21,6 +21,7 @@ public class Save {
             displayArrays(fileNames);
         else {
             Menu.errorMessage("Файлы сохранений отсутсвуют");
+            return null;
         }
         int selected = InputHandler.getIntInput();
         return saveFiles[selected - 1];

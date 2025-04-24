@@ -25,7 +25,9 @@ public class MapSave extends Save {
 
     public static MainMap readSave() {
         File saveFile = getSaveFile(folderPath);
-
+        if (saveFile == null) {
+            return null;
+        }
         try (FileInputStream fileIn = new FileInputStream(saveFile);
              ObjectInputStream in = new ObjectInputStream(fileIn)) {
 

@@ -1,5 +1,6 @@
 package game;
 
+import java.io.IOException;
 import java.util.*;
 
 import DB.Saves.MapSave;
@@ -7,9 +8,11 @@ import game.Map.MainMap;
 import game.Player.Entities.*;
 import game.Player.OwnerType;
 import game.Player.Player;
+import game.Utils.GameTime;
 import game.Utils.InputHandler;
 import game.Utils.Menu.GameMenu;
 import game.Utils.Menu.MainMenu;
+import game.Utils.Menu.Menu;
 
 import static game.Main.saveGame;
 import static game.Utils.Menu.GameMenu.chooseMapSave;
@@ -22,17 +25,19 @@ public class MainGame extends Game {
     private OwnerType invader;
     private Battle battle;
     private GameStatus status;
+    private GameTime gameTime;
 
     public MainGame(int n, int m) {
         super(n, m);
+        gameTime = new GameTime();
         person = new Player(185, OwnerType.PERSON);
         computer = new Player(185, OwnerType.COMPUTER);
-//        gameMap = new MainMap(n, m, person, computer);
         setGameMap(false);
     }
 
     public MainGame(int n, int m, Player person, Player computer) {
         super(n, m);
+        gameTime = new GameTime();
         this.person = person;
         this.computer = computer;
         setGameMap(false);
@@ -45,21 +50,43 @@ public class MainGame extends Game {
         setGameMap(auto);
     }
 
-    private void setGameMap(boolean auto) {
-        int selected;
-        if (!auto) {
-            chooseMapSave();
-            selected = InputHandler.getIntInput();
-        } else selected = 0;
+    private void createNewMap() {
+        gameMap = new MainMap(n, m, person, computer);
+    }
 
-        if (selected == 1) {
-            gameMap = MapSave.readSave();
-            assert gameMap != null;
-            if (!gameMap.hasPlayers()) {
-                gameMap.setPlayers(person, computer);
+    private boolean shouldLoadSavedMap(boolean autoGenerate) {
+        return !autoGenerate && userWantsToLoadSave();
+    }
+
+    private boolean userWantsToLoadSave() {
+        chooseMapSave();
+        return InputHandler.getIntInput() == 1;
+    }
+
+    private void loadSavedMap() throws IOException {
+        gameMap = MapSave.readSave();
+        if (gameMap == null) {
+            createNewMap();
+        }
+    }
+
+    private void ensurePlayersAreSet() {
+        if (gameMap != null && !gameMap.hasPlayers()) {
+            gameMap.setPlayers(person, computer);
+        }
+    }
+
+    private void setGameMap(boolean auto) {
+        try {
+            if (shouldLoadSavedMap(auto)) {
+                loadSavedMap();
+            } else {
+                createNewMap();
             }
-        } else {
-            gameMap = new MainMap(n, m, person, computer);
+
+            ensurePlayersAreSet();
+        } catch (Exception e) {
+            GameMenu.errorMessage(e.getMessage());
         }
     }
 
