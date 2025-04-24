@@ -47,7 +47,7 @@ public class Menu {
             GameLogger.warn(message);
         }
 
-        sleep(200);
+//        sleep(200);
     }
 
     public static void sleep(int millis) {

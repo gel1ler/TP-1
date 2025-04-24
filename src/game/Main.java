@@ -10,7 +10,7 @@ import static DB.Saves.GameSave.writeSave;
 import game.Utils.Menu.Menu;
 
 public class Main {
-    private static final Checkers checkers = new Checkers(6);
+    private static final Checkers checkers = new Checkers(4);
 
     public static void main(String[] args) {
         checkers.start();

@@ -9,10 +9,11 @@ import java.util.List;
 import java.util.Map;
 
 public class Checkers {
-    private Board board;
-    private int size;
+    private final Board board;
+    private final int size;
     private Piece[][] pieces;
     private Piece selectedPiece;
+    private OwnerType winner = null;
     private final Map<Integer, Integer> piecesRows = Map.of(
             5, 4,
             6, 4,
@@ -38,15 +39,37 @@ public class Checkers {
     public void gamePlay() {
         while (true) {
             board.display(pieces);
+            if (!personTurn()) break;
+            if (isGameOver()) break;
 
-            if (!personTurn())
-                break;
             board.display(pieces);
-
             computerTurn();
+            if (isGameOver()) break;
+
             CheckersMenu.println("\nComputer is thinking...");
-            CheckersMenu.sleep(1500);
         }
+    }
+
+    private boolean isGameOver() {
+        boolean flag = false;
+        if (isGameOverFor(OwnerType.PERSON)) {
+            CheckersMenu.println("Вы проиграли!");
+            flag = true;
+        }
+        if (isGameOverFor(OwnerType.COMPUTER)) {
+            CheckersMenu.println("Вы выиграли!");
+            flag = true;
+        }
+
+        if (flag)
+            CheckersMenu.printFormattedMessage("Игра окончена");
+
+        return flag;
+    }
+
+    private boolean isGameOverFor(OwnerType player) {
+        CheckersMenu.println(getYourMovablePieces(player).toString());
+        return getYourMovablePieces(player).isEmpty();
     }
 
     //MAIN=======================
@@ -70,11 +93,6 @@ public class Checkers {
                 return false;
             } else if (choice >= 0 && choice < availableMoves.size()) {
                 move(availableMoves.get(choice), selectedPiece);
-                if (isOnLastRow(selectedPiece)) {
-                    selectedPiece.promoteToKing();
-                    CheckersMenu.println("Ваша фигура прошла в дамки!");
-                }
-                ;
                 return true;
             } else {
                 CheckersMenu.wrongChoice();
@@ -120,8 +138,14 @@ public class Checkers {
     private void computerTurn() {
         List<Piece> movablePieces = getYourMovablePieces(OwnerType.COMPUTER);
 
+        if (movablePieces.isEmpty()) {
+            winner = OwnerType.PERSON;
+            return;
+        }
+
 //        int pieceIndex = (int) (Math.random() * movablePieces.size());
         int pieceIndex = 0;
+
         Piece selected = movablePieces.get(pieceIndex);
 
         List<String> availableMoves = getAvailableMoves(OwnerType.COMPUTER, selected);
@@ -151,17 +175,17 @@ public class Checkers {
         List<Piece> resEatArr = new ArrayList<>();
 
         for (Piece[] row : pieces) {
-            for (Piece i : row) {
-                if (i != null
+            for (Piece piece : row) {
+                if (piece != null
                         &&
-                        i.getPieceType() == owner.getPieceType()
+                        owner.isYourPiece(piece)
                         &&
-                        isMovable(owner, i)
+                        isMovable(owner, piece)
                 ) {
-                    if (canEat(owner, i)) {
-                        resEatArr.add(i);
+                    if (canEat(owner, piece)) {
+                        resEatArr.add(piece);
                     } else {
-                        resArr.add(i);
+                        resArr.add(piece);
                     }
                 }
             }
@@ -173,50 +197,62 @@ public class Checkers {
     }
 
     private List<String> getAvailableMoves(OwnerType ownerType, Piece piece) {
-        int m = getBoardDirection(ownerType);
+        String moveDirection = getMoveDirection(piece);
 
         int y = piece.getY();
         int x = piece.getX();
 
         List<String> res = new ArrayList<>();
+        List<String> resEat = new ArrayList<>();
 
-        int iterations = piece.isKing() ? 2 : 1;
+        int delta = 1;
+        int iterations = 1;
+
+        if (moveDirection.equals("top"))
+            delta = -1;
+        if (moveDirection.equals("both"))
+            iterations = 2;
 
         int i = 0;
         while (i < iterations) {
-            String direction = m == 1 ? "_bottom" : "_top";
-            String temp = iterations == 2 ? direction : "";
-            try {
-                if (pieces[y + m][x + m] == null) {
-                    if (arrCantEat(res))
-                        res.add("left" + temp);
-                } else if (pieces[y + m][x + m].getPieceType() != ownerType.getPieceType() && pieces[y + 2 * m][x + 2 * m] == null) {
-                    removeBasic(res);
-                    res.add("eat_left" + temp);
+
+            //LEFT
+            if (isLegalMove(y, x, delta, "left")) {
+                if (pieces[y + delta][x + delta] == null) {
+                    res.add("left_" + moveDirection);
+                } else if (isLegalMove(y, x, delta * 2, "left") && //Идешь не за пределы
+                        !ownerType.isYourPiece(pieces[y + delta][x + delta]) && //Бьешь не свое
+                        pieces[y + 2 * delta][x + 2 * delta] == null
+                ) {
+                    resEat.add("eat_left_" + moveDirection);
                 }
-            } catch (ArrayIndexOutOfBoundsException ignored) {
+
             }
 
-            try {
-                if (pieces[y + m][x - m] == null) {
+            //RIGHT
+            if (isLegalMove(y, x, delta, "right")) {
+                if (pieces[y + delta][x - delta] == null) {
                     if (arrCantEat(res))
-                        res.add("right" + temp);
-                } else if (pieces[y + m][x - m].getPieceType() != ownerType.getPieceType() && pieces[y + 2 * m][x - 2 * m] == null) {
+                        res.add("right_" + moveDirection);
+                } else if (isLegalMove(y, x, delta * 2, "right") &&
+                        !ownerType.isYourPiece(pieces[y + delta][x - delta]) &&
+                        pieces[y + 2 * delta][x - 2 * delta] == null) {
                     removeBasic(res);
-                    res.add("eat_right" + temp);
+                    resEat.add("eat_right_" + moveDirection);
                 }
-            } catch (ArrayIndexOutOfBoundsException ignored) {
             }
             i++;
-            m = -m;
+            delta = -delta;
         }
 
+        if (!resEat.isEmpty())
+            return resEat;
         return res;
     }
 
     private boolean arrCantEat(List<String> arr) {
-        for (String i:arr) {
-            if(i.contains("eat")){
+        for (String i : arr) {
+            if (i.contains("eat")) {
                 return false;
             }
         }
@@ -228,47 +264,58 @@ public class Checkers {
     }
 
     private void move(String direction, Piece piece) {
-        int m = getBoardDirection(piece);
+        String moveDirection = getMoveDirection(piece);
+        int delta = 1;
+
+        if (moveDirection.equals("top"))
+            delta = -1;
 
         int y = piece.getY();
         int x = piece.getX();
         int newY, newX;
         switch (direction) {
-            case "left":
-                newY = y + m;
-                newX = x + m;
+            case "left_top":
+                newY = y + delta;
+                newX = x + delta;
                 break;
-            case "eat_left":
-                newY = y + 2 * m;
-                newX = x + 2 * m;
-                if (selectedPiece == pieces[y + m][x + m])
-                    selectedPiece = null;
-                pieces[y + m][x + m] = null;
+            case "eat_left_top":
+                newY = y + 2 * delta;
+                newX = x + 2 * delta;
+                selectedNullIfEquals(pieces[y + delta][x + delta]);
+                pieces[y + delta][x + delta] = null;
                 break;
-            case "right":
-                newY = y + m;
-                newX = x - m;
+            case "right_top":
+                newY = y - delta;
+                newX = x - delta;
                 break;
-            case "eat_right":
-                newY = y + 2 * m;
-                newX = x - 2 * m;
-                if (selectedPiece == pieces[y + m][x - m])
-                    selectedPiece = null;
-                pieces[y + m][x - m] = null;
+            case "eat_right_top":
+                newY = y + 2 * delta;
+                newX = x - 2 * delta;
+                selectedNullIfEquals(pieces[y + delta][x - delta]);
+                pieces[y + delta][x - delta] = null;
                 break;
             default:
                 newY = y;
                 newX = x;
         }
 
-        piece.setPosition(newY, newX);
-        pieces[newY][newX] = pieces[y][x];
-        if (x != newX && y != newY)
-            pieces[y][x] = null;
+        try {
+            piece.setPosition(newY, newX);
+            pieces[newY][newX] = pieces[y][x];
+            if (x != newX && y != newY)
+                pieces[y][x] = null;
+        } catch (ArrayIndexOutOfBoundsException e) {
+            CheckersMenu.println(piece.getY() + ", " + piece.getX());
+            CheckersMenu.errorMessage("Попытка выйти за границы доски: (" + newY + ", " + newX + ")");
+        }
+        if (isOnLastRow(piece) && !piece.isKing()) {
+            piece.promoteToKing();
+            CheckersMenu.println("Фигура прошла в дамки!");
+        }
     }
 
     private boolean isOnLastRow(Piece piece) {
-        if (piece.getPieceType() == OwnerType.PERSON.getPieceType())
+        if (OwnerType.PERSON.isYourPiece(piece))
             return piece.getY() == 0;
         else {
             return piece.getY() == size - 1;
@@ -282,7 +329,8 @@ public class Checkers {
 
     private void initPieces() {
         pieces = new Piece[size][size];
-        int rows = piecesRows.get(size);
+//        int rows = piecesRows.get(size);
+        int rows = 2;
 
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
@@ -303,16 +351,30 @@ public class Checkers {
         return y < 0 || y >= size || x < 0 || x >= size;
     }
 
-    private int getBoardDirection(OwnerType ownerType) {
-        if (ownerType == OwnerType.PERSON)
-            return -1;
-        return 1;
+    private String getMoveDirection(Piece piece) {
+        if (piece.isKing())
+            return "both";
+        else if (OwnerType.PERSON.isYourPiece(piece))
+            return "top";
+        return "bottom";
     }
 
-    private int getBoardDirection(Piece piece) {
-        if (piece.getPieceType() == OwnerType.PERSON.getPieceType())
-            return -1;
-        return 1;
+    private void selectedNullIfEquals(Piece piece) {
+        if (selectedPiece == piece)
+            selectedPiece = null;
+    }
+
+    private boolean isLegalMove(int y, int x, int delta, String dir) {
+        if (dir.equals("left"))
+            return y + delta >= 0 && y + delta < size &&
+                    x + delta >= 0 && x + delta < size;
+        else if (dir.equals("right")) {
+            return y + delta >= 0 && y + delta < size &&
+                    x - delta >= 0 && x - delta < size;
+        } else {
+            CheckersMenu.errorMessage("Неправильное направление");
+            return true;
+        }
     }
 
     //INIT AND UTILS=======================

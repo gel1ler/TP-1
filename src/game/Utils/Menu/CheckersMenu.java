@@ -23,7 +23,7 @@ public class CheckersMenu extends Menu {
             for (int colI = 0; colI < size; colI++) {
                 Piece temp = pieces[rowI][colI];
 
-                if (temp != null && temp.getPieceType() == OwnerType.PERSON.getPieceType()) {
+                if (temp != null && OwnerType.PERSON.isYourPiece(temp)) {
                     if (movablePieces.contains(temp))
                         rowArr.add(temp.toString() + rowI + colI);
                     else
