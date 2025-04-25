@@ -23,7 +23,8 @@ public enum CellType {
     CAVALRYMAN(0, "\uD83D\uDC0E"),
     RASCAL(0, "\uD83E\uDD8A"),
     FOG(150, "\uD83C\uDF2B"),
-    GOLD(150, "\uD83C\uDF15");
+    GOLD(150, "\uD83C\uDF15"),
+    HOTEL(0, "\uD83D\uDECF️");
 
     private final int penalty;
     private final String icon;

@@ -2,6 +2,7 @@ package game.Player.Entities;
 
 import game.Map.CellType;
 import game.Player.OwnerType;
+import game.Player.Player;
 import game.Utils.Menu.GameMenu;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ public class Hero extends Entity {
     private final List<Unit> units = new ArrayList<>();
     private final HeroType heroType;
 
-    public Hero(HeroType heroType, OwnerType owner) {
+    public Hero(HeroType heroType, Player owner) {
         super(heroType.getName(), heroType.getCost(), heroType.getMovementPoints(), heroType.getCellType(), owner);
         this.heroType = heroType;
     }

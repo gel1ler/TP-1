@@ -1,13 +1,14 @@
 package game.Player.Entities;
 
 import game.Player.OwnerType;
+import game.Player.Player;
 import game.Utils.Menu.GameMenu;
 
 public class Unit extends Entity {
     private int hp, damage, fightDist, recruitedNumber = 0;
     private final UnitType unitType;
 
-    public Unit(UnitType unitType, OwnerType owner) {
+    public Unit(UnitType unitType, Player owner) {
         super(unitType.getName(), unitType.getCost(), unitType.getMovementPoints(), unitType.getCellType(), owner);
         this.unitType = unitType;
         this.hp = unitType.getHp();
@@ -49,7 +50,7 @@ public class Unit extends Entity {
         boolean isAlive = victim.minusHp(this.damage);
 
         if (isAlive) {
-            String shown = victim.getOwner().equals(OwnerType.PERSON) ? "вашего" : "вражеского";
+            String shown = victim.getOwnerType().equals(OwnerType.PERSON) ? "вашего" : "вражеского";
             GameMenu.println("У " + shown + " Юнита " + victim.getName() + " осталось " + victim.getHp() + " HP");
         }
     }

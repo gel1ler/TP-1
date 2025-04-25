@@ -3,6 +3,7 @@ package game.Player.Entities;
 import game.Castle.Buy;
 import game.Map.CellType;
 import game.Player.OwnerType;
+import game.Player.Player;
 
 public class Entity extends Buy {
     protected CellType cellType;
@@ -10,7 +11,7 @@ public class Entity extends Buy {
     private int y = 0;
     private int movementPoints;
 
-    public Entity(String name, int cost, int movementPoints, CellType cellType, OwnerType owner) {
+    public Entity(String name, int cost, int movementPoints, CellType cellType, Player owner) {
         super(name, cost, owner);
         this.movementPoints = movementPoints;
         this.cellType = cellType;

@@ -11,6 +11,8 @@ import static DB.Saves.GameSave.writeSave;
 import static DB.Users.register;
 
 import game.Map.MapEditor;
+import game.Town.Town;
+import game.Utils.GameTime;
 import game.Utils.InputHandler;
 import game.Utils.Menu.MainMenu;
 import game.Utils.Menu.Menu;
@@ -21,7 +23,7 @@ public class Main {
     private static final Map<String, Long> stats = new HashMap<>();
 
     public static boolean saveGame(boolean auto) {
-        if(game == null){
+        if (game == null) {
             return false;
         }
         writeSave(game, auto);
@@ -74,9 +76,12 @@ public class Main {
         stats.put("kills", (long) 0);
         stats.put("steps", (long) 0);
 
+        GameTime.init();
+        Town.startLife();
+
         boolean isWinner = game.start();
 
-//        stats.put("time", executionTime / 1000);
+        stats.put("time", GameTime.getMinutes() / 1000);
 
         if (isWinner) {
             insertRecords(name, stats);

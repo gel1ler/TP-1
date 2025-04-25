@@ -18,7 +18,7 @@ public class Tavern extends Building {
     private final Player owner;
 
     public Tavern(Player owner) {
-        super("Таверна", 50, Integer.MAX_VALUE, owner.getOwnerType()); // Вызов конструктора Building
+        super("Таверна", 50, Integer.MAX_VALUE, owner); // Вызов конструктора Building
         this.shop = new Shop<>(owner, createAvailableItems());
         this.owner = owner;
     }
@@ -46,7 +46,7 @@ public class Tavern extends Building {
     public void addHeroToOwner(Hero item) {
         if (owner.canAfford(item)) {
             shop.buyItem(item);
-            owner.addHero(new Hero((item).getHeroType(), owner.getOwnerType()));
+            owner.addHero(new Hero((item).getHeroType(), owner));
         } else {
             BuildingMenu.println("Недостаточно золота для покупки: " + item.getName());
         }

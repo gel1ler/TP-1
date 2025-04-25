@@ -54,7 +54,7 @@ public class BattleMap extends Map {
 
             if (objects[y][x] == null || objects[y][x].empty()) {
                 Unit newUnit = units.get(placedUnits);
-                objects[y][x] = new Cell(newUnit.getCellType(), newUnit.getOwner());
+                objects[y][x] = new Cell(newUnit.getCellType(), newUnit.getOwnerType());
                 units.get(placedUnits).setPos(y, x);
                 placedUnits++;
             }

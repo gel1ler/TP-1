@@ -88,14 +88,14 @@ public class BattleTest {
         VHUnit.setPos(coords);
         murdererHero.addUnit(rascal);
 
-        assertEquals(OwnerType.COMPUTER, VHUnit.getOwner());
+        assertEquals(OwnerType.COMPUTER, VHUnit.getOwnerType());
 
-        while (VHUnit.getOwner() == OwnerType.COMPUTER) {
+        while (VHUnit.getOwnerType() == OwnerType.COMPUTER) {
             battle.useSuperAbility(rascal, VHUnit);
         }
 
         assertTrue(TestUtils.logsContains(outputStream, "Кавалерист успешно завербован!"));
-        assertEquals(OwnerType.PERSON, VHUnit.getOwner());
+        assertEquals(OwnerType.PERSON, VHUnit.getOwnerType());
     }
 
     @Test

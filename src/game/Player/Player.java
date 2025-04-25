@@ -17,13 +17,18 @@ public class Player implements Serializable {
     private final Castle castle;
     private int gold;
     private final List<Hero> heroes = new ArrayList<>();
-    private final OwnerType ownerType;
+    private OwnerType ownerType;
 
     public Player(int initialGold, OwnerType ownerType) {
         this.castle = new Castle(this);
         this.gold = initialGold;
         this.ownerType = ownerType;
         this.name = ownerType.getOwner();
+    }
+
+    public Player(String name) {
+        this.castle = new Castle(this);
+        this.name = name;
     }
 
     public String getName() {
@@ -87,7 +92,7 @@ public class Player implements Serializable {
 
     public void kill(Hero victim) {
         victim.display();
-        GameMenu.println(victim.getOwner().toString());
+        GameMenu.println(victim.getOwnerType().toString());
         if(ownerType == OwnerType.COMPUTER) incrementStats("kills");
         this.heroes.removeIf(unit -> unit.getX() == victim.getX() && unit.getY() == victim.getY());
     }

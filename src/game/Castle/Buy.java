@@ -1,27 +1,28 @@
 package game.Castle;
 
 import game.Player.OwnerType;
+import game.Player.Player;
 
 import java.io.Serializable;
 
 public class Buy implements Serializable {
     protected final String name;
     private final int cost;
-    private OwnerType owner;
+    private OwnerType ownerType;
 
-    public Buy(String name, int cost, OwnerType owner) {
+    public Buy(String name, int cost, Player owner) {
         this.name = name;
         this.cost = cost;
-        this.owner = owner;
+        this.ownerType= owner != null ? owner.getOwnerType() : null;
     }
 
-    public OwnerType getOwner() {
-        return owner;
+    public OwnerType getOwnerType() {
+        return ownerType;
     }
 
     public void reverseOwner() {
-        if (owner == OwnerType.PERSON) owner = OwnerType.COMPUTER;
-        else owner = OwnerType.PERSON;
+        if (ownerType == OwnerType.PERSON) ownerType = OwnerType.COMPUTER;
+        else ownerType = OwnerType.PERSON;
     }
 
     public String getName() {

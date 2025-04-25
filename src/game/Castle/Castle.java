@@ -14,8 +14,6 @@ import java.util.List;
 import java.util.Objects;
 
 public class Castle extends Shop<Building> {
-    @Serial
-    private static final long serialVersionUID = 6529685098267757690L;
     private final List<Building> buildings = new ArrayList<>();
     private final Player player;
 
@@ -75,7 +73,8 @@ public class Castle extends Shop<Building> {
                 try {
                     buildings.get(selected - 1).interact();
                 } catch (Exception e) {
-                    GameMenu.errorMessage(e.getMessage());
+                    GameMenu.errorMessage("Ошибка при сохранении");
+                    throw e;
                 }
 
                 BuildingMenu.showEnterBuilding();

@@ -12,7 +12,6 @@ import game.Utils.GameTime;
 import game.Utils.InputHandler;
 import game.Utils.Menu.GameMenu;
 import game.Utils.Menu.MainMenu;
-import game.Utils.Menu.Menu;
 
 import static game.Main.saveGame;
 import static game.Utils.Menu.GameMenu.chooseMapSave;
@@ -32,14 +31,6 @@ public class MainGame extends Game {
         gameTime = new GameTime();
         person = new Player(185, OwnerType.PERSON);
         computer = new Player(185, OwnerType.COMPUTER);
-        setGameMap(false);
-    }
-
-    public MainGame(int n, int m, Player person, Player computer) {
-        super(n, m);
-        gameTime = new GameTime();
-        this.person = person;
-        this.computer = computer;
         setGameMap(false);
     }
 
@@ -118,16 +109,18 @@ public class MainGame extends Game {
 
         while (turnsInCastle != 0) {
             personTurn();
+            MainMenu.println(GameTime.getFullTime());
             gameMap.render();
             if (checkGameOver(computer)) {
                 break;
             }
 
-            computerTurn();
-            gameMap.render();
-            if (checkGameOver(person)) {
-                break;
-            }
+//            computerTurn();
+//            MainMenu.println(GameTime.getFullTime());
+//            gameMap.render();
+//            if (checkGameOver(person)) {
+//                break;
+//            }
 
             if (isCastleInvaded()) {
                 decrementTurnsInCastle();
@@ -167,13 +160,13 @@ public class MainGame extends Game {
     private void initializeGame() {
 //        computer.buyRandom();
         //TEST
-        person.addHero(new Hero(HeroType.BARBARIAN, OwnerType.PERSON));
-        person.getHeroes().forEach(i -> i.addUnit(new Unit(UnitType.RASCAL, OwnerType.PERSON)));
-        person.getHeroes().forEach(i -> i.addUnit(new Unit(UnitType.CAVALRYMAN, OwnerType.PERSON)));
-        person.getHeroes().forEach(i -> i.addUnit(new Unit(UnitType.SWORDSMAN, OwnerType.PERSON)));
+        person.addHero(new Hero(HeroType.BARBARIAN, person));
+        person.getHeroes().forEach(i -> i.addUnit(new Unit(UnitType.RASCAL, person)));
+        person.getHeroes().forEach(i -> i.addUnit(new Unit(UnitType.CAVALRYMAN, person)));
+        person.getHeroes().forEach(i -> i.addUnit(new Unit(UnitType.SWORDSMAN, person)));
 
-        computer.addHero(new Hero(HeroType.KNIGHT, OwnerType.COMPUTER));
-        computer.getHeroes().forEach(i -> i.addUnit(new Unit(UnitType.RASCAL, OwnerType.COMPUTER)));
+        computer.addHero(new Hero(HeroType.KNIGHT, computer));
+        computer.getHeroes().forEach(i -> i.addUnit(new Unit(UnitType.RASCAL, computer)));
 //        computer.getHeroes().forEach(i -> i.addUnit(new Unit(UnitType.PALADIN, OwnerType.COMPUTER)));
 //        computer.getHeroes().forEach(i -> i.addUnit(new Unit(UnitType.SPEARMAN, OwnerType.COMPUTER)));
         //TEST
@@ -186,7 +179,7 @@ public class MainGame extends Game {
         setStatus(GameStatus.INVASION);
         GameMenu.printInvasion(hero);
         this.turnsInCastle = 2;
-        if (this.invader == null) this.invader = hero.getOwner();
+        if (this.invader == null) this.invader = hero.getOwnerType();
         gameMap.registerInvasion(hero);
     }
 

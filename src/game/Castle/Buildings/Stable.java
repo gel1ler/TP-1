@@ -14,7 +14,7 @@ public class Stable extends Building {
     private final Player owner;
 
     public Stable(Player owner) {
-        super("Конюшня", 50, Integer.MAX_VALUE, OwnerType.PERSON);
+        super("Конюшня", 50, Integer.MAX_VALUE, owner);
         this.owner = owner;
     }
 

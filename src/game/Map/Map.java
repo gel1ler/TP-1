@@ -2,6 +2,8 @@ package game.Map;
 
 import game.Player.OwnerType;
 import game.Player.Player;
+import game.Town.Hotel;
+import game.Town.Town;
 import game.Utils.Menu.GameMenu;
 
 import java.io.Serializable;
@@ -107,18 +109,24 @@ public class Map implements Serializable {
     }
 
     public void moveObject(int[] oldCords, int[] newCords, OwnerType owner) {
-        objects[newCords[0]][newCords[1]] = objects[oldCords[0]][oldCords[1]];
-        objects[oldCords[0]][oldCords[1]] = null;
+        int newY = newCords[0], newX = newCords[1];
+        int oldY = oldCords[0], oldX = oldCords[1];
 
-        if (terrain[newCords[0]][newCords[1]].getType() == CellType.GOLD) {
-            terrain[newCords[0]][newCords[1]].setType(CellType.GRASS);
-            terrain[newCords[0]][newCords[1]].setIcon(CellType.GRASS.getIcon());
+        objects[newY][newX] = objects[oldY][oldX];
+        objects[oldY][oldX] = null;
+
+        if (terrain[newY][newX].getType() == CellType.GOLD) {
+            terrain[newY][newX].setType(CellType.GRASS);
+            terrain[newY][newX].setIcon(CellType.GRASS.getIcon());
             GameMenu.println(owner + " получил 100 золота");
             if (owner == OwnerType.PERSON) {
                 person.plusGold(100);
             } else {
                 computer.plusGold(100);
             }
+        }
+        if (terrain[newY][newX].getType() == CellType.HOTEL) {
+            Town.enterBuilding("hotel", person);
         }
     }
 

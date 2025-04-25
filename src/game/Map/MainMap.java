@@ -72,6 +72,7 @@ public class MainMap extends Map {
         terrain[0][0] = new Cell(CellType.PERSON_CASTLE);
         terrain[n - 1][m - 1] = new Cell(CellType.COMPUTER_CASTLE);
         createRoad();
+        terrain[0][m - 1] = new Cell(CellType.HOTEL);
 //        createObstacles(20); // Не симметрично
     }
 
@@ -88,7 +89,7 @@ public class MainMap extends Map {
                     int[] current = queue.poll();
                     int y = current[0], x = current[1];
                     if ((x != startX || y != startY) && (objects[y][x] == null || objects[y][x].empty())) {
-                        objects[y][x] = new Cell(hero.getCellType(), hero.getOwner());
+                        objects[y][x] = new Cell(hero.getCellType(), hero.getOwnerType());
                         hero.setPos(y, x);
                         break;
                     }
@@ -107,11 +108,11 @@ public class MainMap extends Map {
 
     public void registerInvasion(Hero hero) {
         objects[hero.getY()][hero.getX()] = null;
-        if (hero.getOwner() == OwnerType.PERSON) {
-            objects[n - 1][m - 1] = new Cell(hero.getCellType(), hero.getOwner());
+        if (hero.getOwnerType() == OwnerType.PERSON) {
+            objects[n - 1][m - 1] = new Cell(hero.getCellType(), hero.getOwnerType());
             hero.setPos(n - 1, m - 1);
         } else {
-            objects[0][0] = new Cell(hero.getCellType(), hero.getOwner());
+            objects[0][0] = new Cell(hero.getCellType(), hero.getOwnerType());
             hero.setPos(0, 0);
         }
     }

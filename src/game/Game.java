@@ -51,7 +51,7 @@ public class Game implements Serializable {
 
     public void setEntityPos(Entity entity, Map map, int[] pos) {
         try {
-            map.moveObject(new int[]{entity.getY(), entity.getX()}, pos, entity.getOwner());
+            map.moveObject(new int[]{entity.getY(), entity.getX()}, pos, entity.getOwnerType());
             entity.setPos(pos);
         } catch (ArrayIndexOutOfBoundsException e) {
             GameMenu.errorMessage("Вы пытаетесь выйти за пределы карты.");
@@ -117,7 +117,7 @@ public class Game implements Serializable {
             }
 
             if (map.isCellAvailable(newY, newX, true)) {
-                double cost = map.getPenalty(newY, newX, entity.getOwner());
+                double cost = map.getPenalty(newY, newX, entity.getOwnerType());
                 cost *= isDiagonal ? Math.sqrt(2) : 1;
                 if (tempMP >= cost) {
                     tempMP -= (int) cost;

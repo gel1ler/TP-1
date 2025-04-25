@@ -1,6 +1,7 @@
 package game.Castle;
 
 import game.Player.Player;
+import game.Town.Npc;
 import game.Utils.Menu.BuildingMenu;
 
 import java.io.Serializable;
@@ -10,7 +11,7 @@ import java.util.List;
 import static game.Main.saveGame;
 
 public class Shop<T extends Buy> implements Serializable {
-    private final Player player;
+    private Player player;
     private final List<T> availableItems;
 
     public Shop(Player player, List<T> availableItems) {
@@ -18,7 +19,21 @@ public class Shop<T extends Buy> implements Serializable {
         this.availableItems = new ArrayList<>(availableItems);
     }
 
+    public Shop(List<T> availableItems) {
+        this.availableItems = new ArrayList<>(availableItems);
+    }
+
     public void buyItem(T item) {
+        if (player.canAfford(item)) {
+            player.minusGold(item.getCost());
+            BuildingMenu.println("Куплено: " + item.getName());
+            saveGame(true);
+        } else {
+            BuildingMenu.println("Недостаточно золота для покупки: " + item.getName());
+        }
+    }
+
+    public void buyItem(T item, Player player) {
         if (player.canAfford(item)) {
             player.minusGold(item.getCost());
             BuildingMenu.println("Куплено: " + item.getName());

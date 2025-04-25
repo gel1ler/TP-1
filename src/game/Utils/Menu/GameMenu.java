@@ -9,7 +9,7 @@ import java.util.List;
 
 public class GameMenu extends Menu {
     public static void printInvasion(Hero hero) {
-        println(hero.getOwner().name() + " захватывает замок!");
+        println(hero.getOwnerType().name() + " захватывает замок!");
     }
 
     public static void showAvailableHeroActions(int[] enemyCords, int[] castleCords) {

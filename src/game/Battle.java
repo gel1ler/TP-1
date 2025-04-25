@@ -208,7 +208,7 @@ public class Battle extends Game {
             GameMenu.println("Юнит " + victim.getName() + " убит");
             Player killedPlayer;
             Hero killedHero;
-            if (victim.getOwner() == OwnerType.PERSON) {
+            if (victim.getOwnerType() == OwnerType.PERSON) {
                 killedPlayer = person;
                 killedHero = personHero;
             } else {
@@ -235,7 +235,7 @@ public class Battle extends Game {
 //                    Вывод кол-ва завербованных и текущий шанс вербовки
 //                    GameMenu.println(recruitedNumber + " " + chance);
                     if (Math.random() < chance) {
-                        if (recruit.getOwner() == OwnerType.PERSON) {
+                        if (recruit.getOwnerType() == OwnerType.PERSON) {
                             if (selectedUnit != null && selectedUnit.equals(recruit)) selectedUnit = null;
                             personHero.kill(recruit);
                             computerHero.addUnit(recruit);
