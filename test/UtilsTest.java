@@ -29,7 +29,7 @@ public class UtilsTest {
     public void printFormattedMessageTest() {
         TestUtils.setOutputStream(outputStream);
         Menu.printFormattedMessage("ПрИвет");
-        assertTrue(TestUtils.logsContains(outputStream, "============\n" + "П Р И В Е Т\n" + "============"));
+        assertTrue(TestUtils.logsContains(outputStream, "============\r\n" + "П Р И В Е Т\r\n" + "============"));
     }
 
     @Test(expected = StackOverflowError.class)

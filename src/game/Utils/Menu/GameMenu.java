@@ -16,9 +16,10 @@ public class GameMenu extends Menu {
         String helperText = "";
 
         if (enemyCords != null) {
-            helperText = "3 - Начать Битву\t\t";
-        } else if (castleCords != null) {
-            helperText = "4 - Войти в замок\t\t";
+            helperText += "3 - Начать Битву\t\t";
+        }
+        if (castleCords != null) {
+            helperText += "4 - Войти в замок\t\t";
         }
 
         println("Выберите действие:");

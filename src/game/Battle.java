@@ -94,7 +94,7 @@ public class Battle extends Game {
 
         switch (action) {
             case 1:
-                while (move(selectedUnit, battleMap, false)) ;
+                move(selectedUnit, battleMap, false);
                 break;
             case 2:
                 GameMenu.println("Ход пропущен.");

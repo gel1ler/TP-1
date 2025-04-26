@@ -4,6 +4,7 @@ import game.Castle.Buildings.Building;
 import game.Castle.Buy;
 import game.Castle.Castle;
 import game.Player.Entities.Hero;
+import game.Town.Customer;
 import game.Utils.Menu.GameMenu;
 
 import java.io.Serializable;
@@ -18,6 +19,9 @@ public class Player implements Serializable {
     private int gold;
     private final List<Hero> heroes = new ArrayList<>();
     private OwnerType ownerType;
+    private boolean busy = false;
+    private Customer customer = null;
+    private int invasionTime = 2;
 
     public Player(int initialGold, OwnerType ownerType) {
         this.castle = new Castle(this);
@@ -26,7 +30,8 @@ public class Player implements Serializable {
         this.name = ownerType.getOwner();
     }
 
-    public Player(String name) {
+    public Player(String name, int initialGold) {
+        this.gold = initialGold;
         this.castle = new Castle(this);
         this.name = name;
     }
@@ -93,7 +98,7 @@ public class Player implements Serializable {
     public void kill(Hero victim) {
         victim.display();
         GameMenu.println(victim.getOwnerType().toString());
-        if(ownerType == OwnerType.COMPUTER) incrementStats("kills");
+        if (ownerType == OwnerType.COMPUTER) incrementStats("kills");
         this.heroes.removeIf(unit -> unit.getX() == victim.getX() && unit.getY() == victim.getY());
     }
 
@@ -107,5 +112,35 @@ public class Player implements Serializable {
 
     public boolean hasBuilding(Building item) {
         return this.castle.hasBuilding(item.getName());
+    }
+
+    public void makeBusy(Customer customer) {
+        busy = true;
+        this.customer = customer;
+    }
+
+    public void makeFree() {
+        busy = false;
+        this.customer = null;
+    }
+
+    public boolean isBusy() {
+        return busy;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setInvasionTime(int i) {
+        invasionTime = i;
+    }
+
+    public int getInvasionTime() {
+        return invasionTime;
+    }
+
+    public boolean isPerson(){
+        return ownerType == OwnerType.PERSON;
     }
 }

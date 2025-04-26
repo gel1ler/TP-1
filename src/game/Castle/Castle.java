@@ -3,6 +3,7 @@ package game.Castle;
 import game.Castle.Buildings.*;
 import game.Castle.Buildings.Tavern.Tavern;
 import game.Player.Player;
+import game.Town.Town;
 import game.Utils.InputHandler;
 import game.Utils.Menu.BuildingMenu;
 import game.Utils.Menu.GameMenu;
@@ -22,8 +23,8 @@ public class Castle extends Shop<Building> {
 
         this.player = player;
         //TEST
-        buildings.add(new Tavern(player));
-        buildings.add(new Hub(player));
+//        buildings.add(new Tavern(player));
+//        buildings.add(new Hub(player));
     }
 
     private static List<Building> createAvailableBuildings(Player player) {
@@ -50,8 +51,8 @@ public class Castle extends Shop<Building> {
         }
     }
 
-    public void addBuildingToCastle(Building item){
-        if(player.hasBuilding(item)){
+    public void addBuildingToCastle(Building item) {
+        if (player.hasBuilding(item)) {
             BuildingMenu.errorMessage("У вас уже есть это здание");
             return;
         }
@@ -86,9 +87,19 @@ public class Castle extends Shop<Building> {
         }
     }
 
+    private void enterTown() {
+        String[] townBuildingsRus = {"Кафе «Сырники от тети Глаши»", "Парикмахерская «Отрезанное ухо»"};
+        String[] townBuildings = {"cafe", "barbershop"};
+        BuildingMenu.displayAvailiableBuildings(townBuildingsRus);
+
+        int selected = InputHandler.getIntInput();
+
+        Town.enterBuilding(townBuildings[selected - 1], player);
+    }
+
     public void enter() {
         BuildingMenu.println("\nВы в замке.");
-        String[] menuItems = {"Купить здание", "Войти в здание"};
+        String[] menuItems = {"Купить здание", "Войти в здание", "Войти в город"};
         BuildingMenu.displayAvailiableBuildings(menuItems);
 
         int selected = InputHandler.getIntInput();
@@ -99,6 +110,9 @@ public class Castle extends Shop<Building> {
                     break;
                 case 2:
                     enterBuilding();
+                    break;
+                case 3:
+                    enterTown();
                     break;
                 default:
                     BuildingMenu.wrongChoice();

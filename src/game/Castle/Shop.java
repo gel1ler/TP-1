@@ -53,6 +53,16 @@ public class Shop<T extends Buy> implements Serializable {
         BuildingMenu.print("0 - Выйти\n");
     }
 
+    public void showAvailableItems(Player player) {
+        BuildingMenu.showGold(player);
+        BuildingMenu.println("\nДоступные позиции:");
+        for (int i = 0; i < availableItems.size(); i++) {
+            T item = availableItems.get(i);
+            BuildingMenu.print((i + 1) + " - " + item.getName() + " (" + item.getCost() + " золота) \t\t");
+        }
+        BuildingMenu.print("0 - Выйти\n");
+    }
+
     public List<T> getAvailableItems() {
         return availableItems;
     }

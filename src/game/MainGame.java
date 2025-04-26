@@ -8,6 +8,8 @@ import game.Map.MainMap;
 import game.Player.Entities.*;
 import game.Player.OwnerType;
 import game.Player.Player;
+import game.Town.Customer;
+import game.Town.Service;
 import game.Utils.GameTime;
 import game.Utils.InputHandler;
 import game.Utils.Menu.GameMenu;
@@ -21,14 +23,13 @@ public class MainGame extends Game {
     private final Player person, computer;
     private Hero selectedHero;
     private int turnsInCastle = Integer.MAX_VALUE;
-    private OwnerType invader;
+    private Player invader;
     private Battle battle;
     private GameStatus status;
-    private GameTime gameTime;
+    private Customer currentCustomer = null;
 
     public MainGame(int n, int m) {
         super(n, m);
-        gameTime = new GameTime();
         person = new Player(185, OwnerType.PERSON);
         computer = new Player(185, OwnerType.COMPUTER);
         setGameMap(false);
@@ -54,7 +55,7 @@ public class MainGame extends Game {
         return InputHandler.getIntInput() == 1;
     }
 
-    private void loadSavedMap() throws IOException {
+    private void loadSavedMap() {
         gameMap = MapSave.readSave();
         if (gameMap == null) {
             createNewMap();
@@ -107,25 +108,36 @@ public class MainGame extends Game {
         }
         gameMap.render();
 
-        while (turnsInCastle != 0) {
-            personTurn();
-            MainMenu.println(GameTime.getFullTime());
-            gameMap.render();
-            if (checkGameOver(computer)) {
-                break;
+        while (turnsInCastle >= 0) {
+            if (person.isBusy()) {
+                currentCustomer = person.getCustomer();
+                GameMenu.println("У вас сейчас " + currentCustomer.getServiceName() + ". Осталось еще " + GameTime.formatMinutes(currentCustomer.getRemains()));
+                GameMenu.println("Введите 10 чтобы войти в замок или любое другое число для пропуска хода");
+                int selected = InputHandler.getIntInput();
+                if (person.isBusy()) {
+                    if (selected == 10) {
+                        enterCastle();
+                    } else GameMenu.println("Ход пропущен.");
+                }
+            }
+            if (!person.isBusy()) {
+                personTurn();
+                gameMap.render();
+                if (checkGameOver(computer)) {
+                    break;
+                }
             }
 
-//            computerTurn();
-//            MainMenu.println(GameTime.getFullTime());
-//            gameMap.render();
-//            if (checkGameOver(person)) {
-//                break;
-//            }
+            computerTurn();
+            gameMap.render();
+            if (checkGameOver(person)) {
+                break;
+            }
 
             if (isCastleInvaded()) {
                 decrementTurnsInCastle();
                 if (turnsInCastle < 0) {
-                    MainMenu.printGameEnd(this.invader.getEnemy());
+                    MainMenu.printGameEnd(this.invader.getOwnerType().getEnemy());
                     break;
                 }
             }
@@ -144,7 +156,7 @@ public class MainGame extends Game {
         boolean ownerHasHeroes = owner.hasHeroes(); //Есть ли герои
         boolean allHeroesHaveUnits = owner.getHeroes().stream().allMatch(i -> i.getUnitsCount() > 0); // У всех ли героев есть юниты
         boolean ownerHasAllBuildings = owner.hasTavern() && owner.hasHub(); // Есть ли все здания
-        boolean isLostByInvasion = turnsInCastle < 0 && invader != owner.getOwnerType(); // Не проиграл ли вторжением
+        boolean isLostByInvasion = turnsInCastle < 0 && invader != owner; // Не проиграл ли вторжением
 
         return !ownerHasHeroes || !allHeroesHaveUnits || !ownerHasAllBuildings || isLostByInvasion;
     }
@@ -154,7 +166,7 @@ public class MainGame extends Game {
     }
 
     public boolean isCastleInvaded() {
-        return turnsInCastle <= 2;
+        return turnsInCastle <= (invader != null ? invader.getInvasionTime() : 2);
     }
 
     private void initializeGame() {
@@ -178,8 +190,8 @@ public class MainGame extends Game {
     public void startInvasion(Hero hero) {
         setStatus(GameStatus.INVASION);
         GameMenu.printInvasion(hero);
-        this.turnsInCastle = 2;
-        if (this.invader == null) this.invader = hero.getOwnerType();
+        if (this.invader == null) this.invader = hero.getOwner();
+        this.turnsInCastle = invader.getInvasionTime();
         gameMap.registerInvasion(hero);
     }
 
@@ -193,13 +205,13 @@ public class MainGame extends Game {
         int x = selectedHero.getX();
 
         HashMap<String, int[]> nearby = checkEnemies(y, x, gameMap, OwnerType.PERSON, 1);
-
         int[] enemyCords = nearby.get("enemy");
         int[] castleCords = nearby.get("castle");
 
         if (enemyCords != null) {
             canAtack = true;
-        } else if (castleCords != null) {
+        }
+        if (castleCords != null) {
             canInvade = true;
         }
         GameMenu.showAvailableHeroActions(enemyCords, castleCords);
@@ -207,7 +219,7 @@ public class MainGame extends Game {
 
         switch (action) {
             case 1:
-                while (move(selectedHero, gameMap, false)) ;
+                move(selectedHero, gameMap, false);
                 break;
             case 2:
                 GameMenu.println("Ход пропущен.");
@@ -230,10 +242,7 @@ public class MainGame extends Game {
                 personTurn();
                 return;
             case 10:
-                setStatus(GameStatus.INCASTLE);
-                person.getCastle().enter();
-                //FIX - установка если позиция 0, 0 но он может быть в замке. Надо добавить boolean поле isPlaced
-                gameMap.updateHeroes(0, 0);
+                enterCastle();
                 personTurn();
                 break;
             default:
@@ -241,6 +250,13 @@ public class MainGame extends Game {
                 personTurn();
                 break;
         }
+    }
+
+    private void enterCastle() {
+        setStatus(GameStatus.INCASTLE);
+        person.getCastle().enter();
+        //FIX - установка если позиция 0, 0, но он может быть в замке. Надо добавить boolean поле isPlaced
+        gameMap.updateHeroes(0, 0);
     }
 
     private void computerTurn() {
@@ -266,7 +282,7 @@ public class MainGame extends Game {
             startInvasion(computerHero);
         } else {
             GameMenu.println("Компьютер перемещает героя.");
-            while (move(computerHero, gameMap, true)) ;
+            move(computerHero, gameMap, true);
         }
     }
 

@@ -8,11 +8,13 @@ import java.io.Serializable;
 public class Buy implements Serializable {
     protected final String name;
     private final int cost;
+    private final Player owner;
     private OwnerType ownerType;
 
     public Buy(String name, int cost, Player owner) {
         this.name = name;
         this.cost = cost;
+        this.owner = owner;
         this.ownerType= owner != null ? owner.getOwnerType() : null;
     }
 
@@ -31,5 +33,9 @@ public class Buy implements Serializable {
 
     public int getCost() {
         return cost;
+    }
+
+    public Player getOwner() {
+        return owner;
     }
 }

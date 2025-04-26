@@ -2,12 +2,10 @@ package game.Map;
 
 import game.Player.OwnerType;
 import game.Player.Player;
-import game.Town.Hotel;
 import game.Town.Town;
 import game.Utils.Menu.GameMenu;
 
 import java.io.Serializable;
-import java.util.Arrays;
 
 public class Map implements Serializable {
     protected int n, m;

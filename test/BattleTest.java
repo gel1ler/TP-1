@@ -31,10 +31,10 @@ public class BattleTest {
         GameLogger.info("Battle test started");
         murderer = new Player(185, OwnerType.PERSON);
         victim = new Player(185, OwnerType.COMPUTER);
-        murdererHero = new Hero(HeroType.BARBARIAN, OwnerType.PERSON);
-        victimHero = new Hero(HeroType.BARBARIAN, OwnerType.COMPUTER);
-        MHUnit = new Unit(UnitType.SWORDSMAN, OwnerType.PERSON);
-        VHUnit = new Unit(UnitType.CAVALRYMAN, OwnerType.COMPUTER);
+        murdererHero = new Hero(HeroType.BARBARIAN,murderer);
+        victimHero = new Hero(HeroType.BARBARIAN, victim);
+        MHUnit = new Unit(UnitType.SWORDSMAN, murderer);
+        VHUnit = new Unit(UnitType.CAVALRYMAN, victim);
         murdererHero.addUnit(MHUnit);
         victimHero.addUnit(VHUnit);
         gameMap = new MainMap(5, 5, murderer, victim);
@@ -84,7 +84,7 @@ public class BattleTest {
         TestUtils.setOutputStream(outputStream);
 
         int[] coords = {2, 3};
-        Unit rascal = new Unit(UnitType.RASCAL, OwnerType.PERSON);
+        Unit rascal = new Unit(UnitType.RASCAL, murderer);
         VHUnit.setPos(coords);
         murdererHero.addUnit(rascal);
 
@@ -109,7 +109,7 @@ public class BattleTest {
         assertNull(battle.canPersonAttack(MHUnit.getPos(), MHUnit.getFightDist()));
 
         //Дальность арбалетчика = 3
-        MHUnit = new Unit(UnitType.CROSSBOWMAN, OwnerType.PERSON);
+        MHUnit = new Unit(UnitType.CROSSBOWMAN, murderer);
         battle.setEntityPos(MHUnit, battle.getMap(), new int[]{2, 3});
         battle.setEntityPos(VHUnit, battle.getMap(), new int[]{2, 2});
         assertNotNull(battle.canPersonAttack(MHUnit.getPos(), MHUnit.getFightDist()));

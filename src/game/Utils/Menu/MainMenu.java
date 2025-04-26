@@ -1,6 +1,7 @@
 package game.Utils.Menu;
 
 import game.Player.OwnerType;
+import game.Player.Player;
 
 public class MainMenu extends Menu {
     public static void showStartMenu() {

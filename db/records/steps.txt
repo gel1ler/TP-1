@@ -1,10 +1,2 @@
-asfg 0
-asd 0
-asd 0
-фыв 0
 Alex 1
-Alex 1
-Alex 1
-asd 3
-asd 4
-John 234
+Looser 1000000

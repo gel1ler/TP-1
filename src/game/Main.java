@@ -11,6 +11,7 @@ import static DB.Saves.GameSave.writeSave;
 import static DB.Users.register;
 
 import game.Map.MapEditor;
+import game.Town.NpcManager;
 import game.Town.Town;
 import game.Utils.GameTime;
 import game.Utils.InputHandler;
@@ -43,18 +44,15 @@ public class Main {
     }
 
     public static void main(String[] args) throws IOException {
-        MainMenu.registrationForm();
-        name = InputHandler.getStringInput();
-        while (!register(name)) {
+        do {
             MainMenu.registrationForm();
             name = InputHandler.getStringInput();
-        }
+        } while (!register(name));
 
         boolean isRunning = true;
         while (isRunning) {
             MainMenu.showStartMenu();
             int selected = InputHandler.getIntInput();
-
             switch (selected) {
                 case 1:
                     MainMenu.printFormattedMessage("новая игра началась");
@@ -81,8 +79,8 @@ public class Main {
 
         boolean isWinner = game.start();
 
-        stats.put("time", GameTime.getMinutes() / 1000);
-
+        NpcManager.stop();
+        stats.put("time", GameTime.getMinutes());
         if (isWinner) {
             insertRecords(name, stats);
         }

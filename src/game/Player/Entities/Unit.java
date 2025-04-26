@@ -66,5 +66,9 @@ public class Unit extends Entity {
     public int getRecruitedNumber() {
         return recruitedNumber;
     }
+
+    public void addHp(int hp) {
+        this.hp += hp;
+    }
 }
 

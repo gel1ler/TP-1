@@ -28,9 +28,9 @@ public class Game implements Serializable {
                 if (i == y && j == x) {
                     continue;
                 }
-
-                if (map.isEnemyCastle(i, j, owner))
+                if (map.isEnemyCastle(i, j, owner)) {
                     nearby.put("castle", new int[]{i, j});
+                }
                 if (map.isEnemy(i, j, owner)) {
                     nearby.put("enemy", new int[]{i, j});
                 }
@@ -58,7 +58,7 @@ public class Game implements Serializable {
         }
     }
 
-    protected boolean move(Entity entity, Map map, boolean auto) {
+    protected void move(Entity entity, Map map, boolean auto) {
         int tempMP = entity.getMP();
         while (tempMP > 75) {
             if (!auto) {
@@ -77,7 +77,7 @@ public class Game implements Serializable {
                 newX = newPos[1];
             } else {
                 int direction = InputHandler.getIntInput();
-                if (direction == 0) return false;
+                if (direction == 0) return;
 
                 switch (direction) {
                     case 8: // Вверх
@@ -122,19 +122,20 @@ public class Game implements Serializable {
                 if (tempMP >= cost) {
                     tempMP -= (int) cost;
                     setEntityPos(entity, map, new int[]{newY, newX});
+                    if (entity.getOwner().isBusy()) return;
                     if (!auto) {
                         incrementStats("steps");
                         map.render();
                     }
                 } else {
                     if (!auto) Menu.println("Недостаточно очков передвижения на такой ход.");
-                    return false;
+                    return;
                 }
             } else {
-                return false;
+                return;
             }
         }
         Menu.println("Кончились очки передвижения на этот ход.");
-        return false;
+        return;
     }
 }

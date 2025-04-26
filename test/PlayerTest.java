@@ -20,14 +20,14 @@ public class PlayerTest {
     @Before
     public void setUp() {
         player = new Player(185, OwnerType.PERSON); // Предположим, что у вас есть конструктор по умолчанию
-        testHero = new Hero(HeroType.BARBARIAN, OwnerType.PERSON);
-        testHero2 = new Hero(HeroType.BARBARIAN, OwnerType.PERSON);
+        testHero = new Hero(HeroType.BARBARIAN, player);
+        testHero2 = new Hero(HeroType.BARBARIAN, player);
         testCoords = new int[]{2, 2};
         GameLogger.info("Player test ended");
     }
 
     @After
-    public void end(){
+    public void end() {
         GameLogger.info("Player test ended");
     }
 

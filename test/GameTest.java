@@ -24,8 +24,7 @@ import static org.junit.Assert.assertArrayEquals;
 public class GameTest {
     MainGame mainGame;
     Player person, computer;
-    Hero personTestHero = new Hero(HeroType.BARBARIAN, OwnerType.PERSON),
-            computerTestHero = new Hero(HeroType.KNIGHT, OwnerType.COMPUTER);
+    Hero personTestHero, computerTestHero;
     private ByteArrayOutputStream outputStream;
 
     @Rule
@@ -37,10 +36,12 @@ public class GameTest {
 
         person = new Player(185, OwnerType.PERSON);
         computer = new Player(185, OwnerType.COMPUTER);
+        personTestHero = new Hero(HeroType.BARBARIAN, person);
+        computerTestHero = new Hero(HeroType.KNIGHT, computer);
         person.addHero(personTestHero);
         computer.addHero(computerTestHero);
-        personTestHero.addUnit(new Unit(UnitType.SWORDSMAN, OwnerType.PERSON));
-        computerTestHero.addUnit(new Unit(UnitType.RASCAL, OwnerType.COMPUTER));
+        personTestHero.addUnit(new Unit(UnitType.SWORDSMAN, person));
+        computerTestHero.addUnit(new Unit(UnitType.RASCAL, computer));
         mainGame = new MainGame(10, 10, person, computer, true);
         mainGame.getMap().setHeroes(0, 0, person);
         mainGame.getMap().setHeroes(10 - 1, 10 - 1, computer);

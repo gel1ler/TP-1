@@ -29,7 +29,7 @@ public class BuildingsTest {
         GameLogger.info("Battle test started");
 
         player = new Player(185, OwnerType.PERSON);
-        testHero = new Hero(HeroType.KNIGHT, OwnerType.PERSON);
+        testHero = new Hero(HeroType.KNIGHT, player);
 
         outputStream = new ByteArrayOutputStream();
     }
@@ -69,7 +69,7 @@ public class BuildingsTest {
         assertEquals(0, testHero.getUnitsCount());
 
         Hub hub = new Hub(player);
-        Unit testUnit = new Unit(UnitType.RASCAL, OwnerType.PERSON);
+        Unit testUnit = new Unit(UnitType.RASCAL, player);
         hub.addUnitToHero(testUnit, testHero);
 
         assertEquals(1, testHero.getUnitsCount());

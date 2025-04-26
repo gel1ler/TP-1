@@ -49,6 +49,7 @@ public class Entity extends Buy {
     }
 
     public void plusMP(int mpIncrement) {
-        this.movementPoints += mpIncrement;
+
+        if (this.movementPoints != 0) this.movementPoints += mpIncrement;
     }
 }
