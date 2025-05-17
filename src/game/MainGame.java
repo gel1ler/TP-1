@@ -1,6 +1,5 @@
 package game;
 
-import java.io.IOException;
 import java.util.*;
 
 import DB.Saves.MapSave;
@@ -26,7 +25,6 @@ public class MainGame extends Game {
     private Player invader;
     private Battle battle;
     private GameStatus status;
-    private Customer currentCustomer = null;
 
     public MainGame(int n, int m) {
         super(n, m);
@@ -42,17 +40,29 @@ public class MainGame extends Game {
         setGameMap(auto);
     }
 
-    private void createNewMap() {
-        gameMap = new MainMap(n, m, person, computer);
-    }
 
-    private boolean shouldLoadSavedMap(boolean autoGenerate) {
-        return !autoGenerate && userWantsToLoadSave();
+    // INIT MAP
+    private void setGameMap(boolean auto) {
+        try {
+            if (!auto && userWantsToLoadSave()) {
+                loadSavedMap();
+            } else {
+                createNewMap();
+            }
+
+            ensurePlayersAreSet();
+        } catch (Exception e) {
+            GameMenu.errorMessage(e.getMessage());
+        }
     }
 
     private boolean userWantsToLoadSave() {
         chooseMapSave();
         return InputHandler.getIntInput() == 1;
+    }
+
+    private void createNewMap() {
+        gameMap = new MainMap(n, m, person, computer);
     }
 
     private void loadSavedMap() {
@@ -67,29 +77,17 @@ public class MainGame extends Game {
             gameMap.setPlayers(person, computer);
         }
     }
+    // INIT MAP
 
-    private void setGameMap(boolean auto) {
-        try {
-            if (shouldLoadSavedMap(auto)) {
-                loadSavedMap();
-            } else {
-                createNewMap();
-            }
 
-            ensurePlayersAreSet();
-        } catch (Exception e) {
-            GameMenu.errorMessage(e.getMessage());
-        }
-    }
-
+    //START GAME
     public boolean start() {
         if (status == null) initializeGame();
         else if (status == GameStatus.BATTLE) {
             continueBattle();
         }
 
-        person.getCastle().enter(); // Покупка и найм
-
+        person.getCastle().enter();
         if (isGameOverFor(person)) {
             MainMenu.printGameEnd(OwnerType.PERSON);
         } else {
@@ -98,8 +96,22 @@ public class MainGame extends Game {
         return checkGameOver(computer);
     }
 
-    private void setStatus(GameStatus status) {
-        this.status = status;
+    private void initializeGame() {
+//        computer.buyRandom();
+        //TEST
+        person.addHero(new Hero(HeroType.BARBARIAN, person));
+        person.getHeroes().forEach(i -> i.addUnit(new Unit(UnitType.RASCAL, person)));
+        person.getHeroes().forEach(i -> i.addUnit(new Unit(UnitType.CAVALRYMAN, person)));
+        person.getHeroes().forEach(i -> i.addUnit(new Unit(UnitType.SWORDSMAN, person)));
+
+        computer.addHero(new Hero(HeroType.KNIGHT, computer));
+        computer.getHeroes().forEach(i -> i.addUnit(new Unit(UnitType.RASCAL, computer)));
+//        computer.getHeroes().forEach(i -> i.addUnit(new Unit(UnitType.PALADIN, OwnerType.COMPUTER)));
+//        computer.getHeroes().forEach(i -> i.addUnit(new Unit(UnitType.SPEARMAN, OwnerType.COMPUTER)));
+        //TEST
+        gameMap.setHeroes(0, 0, person);
+        gameMap.setHeroes(n - 1, m - 1, computer);
+        setStatus(GameStatus.MAINGAME);
     }
 
     private void gamePlay() {
@@ -110,7 +122,7 @@ public class MainGame extends Game {
 
         while (turnsInCastle >= 0) {
             if (person.isBusy()) {
-                currentCustomer = person.getCustomer();
+                Customer currentCustomer = person.getCustomer();
                 GameMenu.println("У вас сейчас " + currentCustomer.getServiceName() + ". Осталось еще " + GameTime.formatMinutes(currentCustomer.getRemains()));
                 GameMenu.println("Введите 10 чтобы войти в замок или любое другое число для пропуска хода");
                 int selected = InputHandler.getIntInput();
@@ -143,15 +155,10 @@ public class MainGame extends Game {
             }
         }
     }
+    //START GAME
 
-    private boolean checkGameOver(Player player) {
-        if (isGameOverFor(player)) {
-            MainMenu.printGameEnd(player.getOwnerType());
-            return true;
-        }
-        return false;
-    }
 
+    //END GAME
     public boolean isGameOverFor(Player owner) {
         boolean ownerHasHeroes = owner.hasHeroes(); //Есть ли герои
         boolean allHeroesHaveUnits = owner.getHeroes().stream().allMatch(i -> i.getUnitsCount() > 0); // У всех ли героев есть юниты
@@ -161,30 +168,23 @@ public class MainGame extends Game {
         return !ownerHasHeroes || !allHeroesHaveUnits || !ownerHasAllBuildings || isLostByInvasion;
     }
 
+    private boolean checkGameOver(Player player) {
+        if (isGameOverFor(player)) {
+            MainMenu.printGameEnd(player.getOwnerType());
+            return true;
+        }
+        return false;
+    }
+    //END GAME
+
+
+    //CASTLE INVASION
     public void decrementTurnsInCastle() {
         turnsInCastle--;
     }
 
     public boolean isCastleInvaded() {
         return turnsInCastle <= (invader != null ? invader.getInvasionTime() : 2);
-    }
-
-    private void initializeGame() {
-//        computer.buyRandom();
-        //TEST
-        person.addHero(new Hero(HeroType.BARBARIAN, person));
-        person.getHeroes().forEach(i -> i.addUnit(new Unit(UnitType.RASCAL, person)));
-        person.getHeroes().forEach(i -> i.addUnit(new Unit(UnitType.CAVALRYMAN, person)));
-        person.getHeroes().forEach(i -> i.addUnit(new Unit(UnitType.SWORDSMAN, person)));
-
-        computer.addHero(new Hero(HeroType.KNIGHT, computer));
-        computer.getHeroes().forEach(i -> i.addUnit(new Unit(UnitType.RASCAL, computer)));
-//        computer.getHeroes().forEach(i -> i.addUnit(new Unit(UnitType.PALADIN, OwnerType.COMPUTER)));
-//        computer.getHeroes().forEach(i -> i.addUnit(new Unit(UnitType.SPEARMAN, OwnerType.COMPUTER)));
-        //TEST
-        gameMap.setHeroes(0, 0, person);
-        gameMap.setHeroes(n - 1, m - 1, computer);
-        setStatus(GameStatus.MAINGAME);
     }
 
     public void startInvasion(Hero hero) {
@@ -194,11 +194,14 @@ public class MainGame extends Game {
         this.turnsInCastle = invader.getInvasionTime();
         gameMap.registerInvasion(hero);
     }
+    //CASTLE INVASION
 
+
+    //PERSON TURN
     private void personTurn() {
         boolean canAtack = false, canInvade = false;
         while (selectedHero == null) {
-            selectedHero = selectHero();
+            selectedHero = personSelectHero();
         }
 
         int y = selectedHero.getY();
@@ -252,13 +255,33 @@ public class MainGame extends Game {
         }
     }
 
+    private Hero personSelectHero() {
+        List<Hero> heroes = person.getHeroes();
+        if (heroes.isEmpty()) {
+            return null;
+        }
+
+        GameMenu.chooseEntity(heroes, "Героя");
+
+        int selected = InputHandler.getIntInput() - 1;
+        if (selected >= 0 && selected < heroes.size()) {
+            return heroes.get(selected);
+        } else {
+            GameMenu.wrongChoice();
+            return null;
+        }
+    }
+
     private void enterCastle() {
         setStatus(GameStatus.INCASTLE);
         person.getCastle().enter();
         //FIX - установка если позиция 0, 0, но он может быть в замке. Надо добавить boolean поле isPlaced
         gameMap.updateHeroes(0, 0);
     }
+    //PERSON TURN
 
+
+    //COMPUTER TURN
     private void computerTurn() {
         GameMenu.println("Ход компьютера");
         Hero computerHero = selectComputerHero();
@@ -286,23 +309,6 @@ public class MainGame extends Game {
         }
     }
 
-    private Hero selectHero() {
-        List<Hero> heroes = person.getHeroes();
-        if (heroes.isEmpty()) {
-            return null;
-        }
-
-        GameMenu.chooseEntity(heroes, "Героя");
-
-        int selected = InputHandler.getIntInput() - 1;
-        if (selected >= 0 && selected < heroes.size()) {
-            return heroes.get(selected);
-        } else {
-            GameMenu.wrongChoice();
-            return null;
-        }
-    }
-
     private Hero selectComputerHero() {
         List<Hero> heroes = computer.getHeroes();
         if (heroes.isEmpty()) {
@@ -311,7 +317,10 @@ public class MainGame extends Game {
 
         return heroes.getFirst();
     }
+    //COMPUTER TURN
 
+
+    //BATTLE
     private void startBattle(Player murderer, Player victim, int[] murdererCords, int[] victimCords) {
         setStatus(GameStatus.BATTLE);
         Hero murdererHero = murderer.getHeroByCords(murdererCords);
@@ -328,6 +337,13 @@ public class MainGame extends Game {
         OwnerType looser = battle.start();
         if (looser == OwnerType.PERSON) selectedHero = null;
     }
+    //BATTLE
+
+
+    //UTILS
+    private void setStatus(GameStatus status) {
+        this.status = status;
+    }
 
     public void moveTest(Hero hero, boolean auto) {
         move(hero, gameMap, auto);
@@ -336,4 +352,5 @@ public class MainGame extends Game {
     public MainMap getMap() {
         return this.gameMap;
     }
+    //UTILS
 }

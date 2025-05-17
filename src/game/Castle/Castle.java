@@ -23,8 +23,8 @@ public class Castle extends Shop<Building> {
 
         this.player = player;
         //TEST
-//        buildings.add(new Tavern(player));
-//        buildings.add(new Hub(player));
+        buildings.add(new Tavern(player));
+        buildings.add(new Hub(player));
     }
 
     private static List<Building> createAvailableBuildings(Player player) {

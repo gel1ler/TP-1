@@ -146,7 +146,7 @@ public class Checkers {
 
     private boolean canEat(OwnerType owner, Piece piece) {
         List<String> availableMoves = getAvailableMoves(owner, piece);
-        return availableMoves.contains("eat_left") || availableMoves.contains("eat_right");
+        return availableMoves.stream().anyMatch(s -> s.contains("eat"));
     }
 
     private List<Piece> getYourMovablePieces(OwnerType owner) {

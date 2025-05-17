@@ -43,25 +43,23 @@ public class Main {
         }
     }
 
+
     public static void main(String[] args) throws IOException {
         do {
             MainMenu.registrationForm();
             name = InputHandler.getStringInput();
         } while (!register(name));
 
-        boolean isRunning = true;
-        while (isRunning) {
+        while (game == null) {
             MainMenu.showStartMenu();
-            int selected = InputHandler.getIntInput();
-            switch (selected) {
+
+            switch (InputHandler.getIntInput()) {
                 case 1:
                     MainMenu.printFormattedMessage("новая игра началась");
                     game = new MainGame(5, 5);
-                    isRunning = false;
                     break;
                 case 2:
                     game = GameSave.readSave();
-                    isRunning = false;
                     break;
                 case 3:
                     MapEditor mapEditor = new MapEditor();
@@ -70,7 +68,6 @@ public class Main {
             }
         }
 
-        assert game != null;
         stats.put("kills", (long) 0);
         stats.put("steps", (long) 0);
 
@@ -81,6 +78,7 @@ public class Main {
 
         NpcManager.stop();
         stats.put("time", GameTime.getMinutes());
+
         if (isWinner) {
             insertRecords(name, stats);
         }

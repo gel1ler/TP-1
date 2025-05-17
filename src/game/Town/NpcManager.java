@@ -37,7 +37,7 @@ public class NpcManager {
 //                    if (hour < 8 || hour > 22) return;
 
                     for (Npc npc : new ArrayList<>(freeNpcs)) {
-                        if (random.nextDouble() < 0.2) {
+                        if (random.nextDouble() < 0.5) {
                             visitRandomBuilding(npc);
                         }
                     }
@@ -61,8 +61,7 @@ public class NpcManager {
         Service service = services.get(random.nextInt(services.size()));
 
         freeNpcs.remove(npc);
-        building.interact(npc, service, () -> {
-        });
+        building.interact(npc, service, () -> freeNpcs.add(npc));
     }
 
     public static void stop() {

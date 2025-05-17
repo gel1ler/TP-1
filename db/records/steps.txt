@@ -1,2 +1,4 @@
+asd 0
 Alex 1
+asd 3
 Looser 1000000
