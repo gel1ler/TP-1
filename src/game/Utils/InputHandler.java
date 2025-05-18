@@ -12,7 +12,7 @@ import static game.Main.saveGame;
 
 public class InputHandler {
     private static Scanner scanner = new Scanner(System.in);
-    private static final int MAX_DEPTH = 1000;
+    private static final int MAX_DEPTH = 100;
     private static int currentDepth = 0;
 
     public static void setScanner(Scanner scanner) {
@@ -29,6 +29,7 @@ public class InputHandler {
                 Menu.println("Game Saved");
                 Menu.print("> ");
             } else {
+                //Игнорировать вывод в консоль
 //                invalidInput();
             }
             return getIntInputOld();

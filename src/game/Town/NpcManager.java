@@ -37,7 +37,7 @@ public class NpcManager {
 //                    if (hour < 8 || hour > 22) return;
 
                     for (Npc npc : new ArrayList<>(freeNpcs)) {
-                        if (random.nextDouble() < 0.5) {
+                        if (random.nextDouble() < 0.9) {
                             visitRandomBuilding(npc);
                         }
                     }
