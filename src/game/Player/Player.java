@@ -33,6 +33,7 @@ public class Player implements Serializable {
     public Player(String name, int initialGold) {
         this.gold = initialGold;
         this.castle = new Castle(this);
+        this.ownerType = OwnerType.COMPUTER;
         this.name = name;
     }
 
@@ -96,8 +97,6 @@ public class Player implements Serializable {
     }
 
     public void kill(Hero victim) {
-        victim.display();
-        GameMenu.println(victim.getOwnerType().toString());
         if (ownerType == OwnerType.COMPUTER) incrementStats("kills");
         this.heroes.removeIf(unit -> unit.getX() == victim.getX() && unit.getY() == victim.getY());
     }

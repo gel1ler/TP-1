@@ -1,6 +1,7 @@
 import game.Player.OwnerType;
 import game.Player.Player;
 import game.Town.Buildings.Hotel;
+import game.Town.SerializableRunnable;
 import game.Town.Service;
 import org.junit.Test;
 
@@ -19,7 +20,7 @@ public class TownBuildingTest {
         // Подготовим тестовые данные
         Player player = new Player(100, OwnerType.PERSON);
         Service service = hotel.getAvailableItems().get(0);
-        Runnable onComplete = () -> {};
+        SerializableRunnable onComplete = () -> {};
 
         for (int i = 0; i < threadCount; i++) {
             new Thread(() -> {

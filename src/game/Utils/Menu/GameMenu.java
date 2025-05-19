@@ -4,6 +4,9 @@ import game.Player.OwnerType;
 import game.Player.Entities.Entity;
 import game.Player.Entities.Hero;
 import game.Player.Entities.Unit;
+import game.Player.Player;
+import game.Town.Customer;
+import game.Utils.GameTime;
 
 import java.util.List;
 
@@ -31,7 +34,7 @@ public class GameMenu extends Menu {
         if (selectedUnit.getMP() != 0) helperText += "1 - Переместить Юнита\t\t";
         helperText += "2 - Пропустить ход \t\t";
         if (enemyCords != null && selectedUnit.getDamage() != 0) helperText += "3 - Атаковать\t\t";
-        if(selectedUnit.haveSuperAbility()) helperText += "4 - Использовать суперспособность\t\t";
+        if (selectedUnit.haveSuperAbility()) helperText += "4 - Использовать суперспособность\t\t";
 
         println("Выберите действие:");
         println(helperText + "0 - Выбрать другого Юнита");
@@ -45,7 +48,7 @@ public class GameMenu extends Menu {
         }
     }
 
-    public static void chooseMapSave(){
+    public static void chooseMapSave() {
         println("Выберите карту:");
         println("0 - База, основа так сказать");
         println("1 - Карты сообщества");
@@ -75,7 +78,14 @@ public class GameMenu extends Menu {
         Menu.println("0 - Выйти");
     }
 
-    public static void mapEditorChoose(){
+    public static void mapEditorChoose() {
         println("1 - Редактировать карту\t\t0 - Продолжить с базовой картой");
     }
+
+    public static void busyPersonMessage(Player person){
+        Customer currentCustomer = person.getCustomer();
+        GameMenu.println("У вас сейчас " + currentCustomer.getServiceName() + ". Осталось еще " + GameTime.formatMinutes(currentCustomer.getRemains()));
+        GameMenu.println("Введите 10 чтобы войти в замок или любое другое число для пропуска хода");
+    }
 }
+

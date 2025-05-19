@@ -4,14 +4,50 @@ import java.io.Serializable;
 
 public class GameTime implements Serializable {
     private static long startTime;
-    private static final long GAME_MINUTE_IN_MS = 100;
+    private static long pauseStartTime; // Время начала паузы
+    private static long totalPausedTime = 0; // Общее время в паузе
+    public static final long GAME_MINUTE_IN_MS = 300;
+
+    private static boolean paused = false;
 
     public static void init() {
         startTime = System.currentTimeMillis();
+        totalPausedTime = 0;
     }
 
-    public static Long getMinutes() {
-        return (System.currentTimeMillis() - startTime) / GAME_MINUTE_IN_MS;
+    public static void pause() {
+        if (!paused) {
+            paused = true;
+            pauseStartTime = System.currentTimeMillis();
+        }
+    }
+
+    public static void resume() {
+        if (paused) {
+            paused = false;
+            totalPausedTime += System.currentTimeMillis() - pauseStartTime;
+        }
+    }
+
+    public static boolean isPaused() {
+        return paused;
+    }
+
+    // Получаем реальное игровое время (исключая время паузы)
+    private static long getCurrentGameTime() {
+        long currentTime = System.currentTimeMillis();
+        if (paused) {
+            return pauseStartTime - startTime - totalPausedTime;
+        }
+        return currentTime - startTime - totalPausedTime;
+    }
+
+    public static long getMinutes() {
+        return getCurrentGameTime() / GAME_MINUTE_IN_MS;
+    }
+
+    public static long convertMinutes(long minutes) {
+        return minutes * GAME_MINUTE_IN_MS;
     }
 
     public static int getOnlyMinutes() {
@@ -47,10 +83,11 @@ public class GameTime implements Serializable {
     }
 
     public static String getFullTime() {
-        return "День " + getDays() + " - " + getOnlyHours() + ":" + getOnlyMinutes();
+        return "День " + getDays() + " - " + String.format("%02d:%02d", getOnlyHours(), getOnlyMinutes());
     }
 
     public static String formatMinutes(long remains) {
-        return "День " + getDays(remains) + " - " + getOnlyHours(remains) + ":" + getOnlyMinutes(remains);
+        return "День " + getDays(remains) + " - " +
+                String.format("%02d:%02d", getOnlyHours(remains), getOnlyMinutes(remains));
     }
 }

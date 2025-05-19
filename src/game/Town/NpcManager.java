@@ -26,6 +26,10 @@ public class NpcManager {
         startLife();
     }
 
+    public static void addToFreeNpc(Npc npc) {
+        freeNpcs.add(npc);
+    }
+
     public static void startLife() {
         lifeThread = new Thread(() -> {
             while (isRunning) {
@@ -54,14 +58,13 @@ public class NpcManager {
     private static void visitRandomBuilding(Npc npc) {
         TownBuilding building = townBuildings.get(random.nextInt(townBuildings.size()));
 
-        if (building.currentVisitors.size() >= building.maxVisitors) return;
+//        List<Service> services = building.getAvailableItems();
 
-        List<Service> services = building.getAvailableItems();
-
-        Service service = services.get(random.nextInt(services.size()));
+//        Service service = services.get(random.nextInt(services.size()));
 
         freeNpcs.remove(npc);
-        building.interact(npc, service, () -> freeNpcs.add(npc));
+        building.enter(npc, true);
+//        building.interact(npc, service, () -> freeNpcs.add(npc));
     }
 
     public static void stop() {

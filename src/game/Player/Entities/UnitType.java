@@ -4,7 +4,7 @@ import game.Map.CellType;
 public enum UnitType {
     SWORDSMAN("Мечник", 10, 80, 15, 1, 150, CellType.SWORDSMAN, null),
     SPEARMAN("Копейщик", 20, 50, 10, 2, 200, CellType.SPEARMAN, null),
-    PALADIN("Паладин", 30, 100, 50, 3, 300, CellType.PALADIN, null),
+    PALADIN("Паладин", 30, 100, 50, 2, 300, CellType.PALADIN, null),
     CROSSBOWMAN("Арбалетчик", 40, 30, 20, 3, 350, CellType.CROSSBOWMAN, null),
     CAVALRYMAN("Кавалерист", 50, 60, 25, 2, 400, CellType.CAVALRYMAN, null),
     RASCAL("Плут", 70, 25, 0, 200, 0, CellType.RASCAL, "recruiting");

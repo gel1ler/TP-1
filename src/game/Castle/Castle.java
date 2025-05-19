@@ -94,7 +94,17 @@ public class Castle extends Shop<Building> {
 
         int selected = InputHandler.getIntInput();
 
-        Town.enterBuilding(townBuildings[selected - 1], player);
+        while (selected != 0) {
+            try {
+                Town.enterBuilding(townBuildings[selected - 1], player);
+            } catch (Exception e) {
+                GameMenu.errorMessage("Ошибка при сохранении");
+                throw e;
+            }
+
+            BuildingMenu.displayAvailiableBuildings(townBuildingsRus);
+            selected = InputHandler.getIntInput();
+        }
     }
 
     public void enter() {

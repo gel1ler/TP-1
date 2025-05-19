@@ -36,7 +36,7 @@ public class InputHandler {
         }
     }
 
-    public static int getIntInput() {
+    public static synchronized int getIntInput() {
         if (currentDepth > MAX_DEPTH) {
             currentDepth = 0;
             throw new IllegalStateException("Слишком много попыток ввода. Повторите попытку позже.");

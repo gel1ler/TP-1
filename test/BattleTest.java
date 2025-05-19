@@ -38,7 +38,7 @@ public class BattleTest {
         murdererHero.addUnit(MHUnit);
         victimHero.addUnit(VHUnit);
         gameMap = new MainMap(5, 5, murderer, victim);
-        battle = new Battle(5, 5, murderer, victim, murdererHero, victimHero, gameMap);
+        battle = new Battle(5, 5, murderer, victim, murdererHero, victimHero);
 
         outputStream = new ByteArrayOutputStream();
     }

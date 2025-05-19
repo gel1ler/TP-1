@@ -6,6 +6,8 @@ import game.Utils.Menu.GameMenu;
 
 import java.io.Serializable;
 
+import static game.Utils.GameTime.GAME_MINUTE_IN_MS;
+
 public class Customer extends Thread implements Serializable {
     private final TownBuilding building;
     Player player;
@@ -39,7 +41,7 @@ public class Customer extends Thread implements Serializable {
         try {
             long remainingTime = getRemains();
             if (remainingTime > 0) {
-                Thread.sleep(remainingTime * 100);
+                Thread.sleep(remainingTime * GAME_MINUTE_IN_MS);
             }
             onServiceCompleted();
         } catch (InterruptedException e) {

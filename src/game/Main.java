@@ -15,6 +15,7 @@ import game.Town.NpcManager;
 import game.Town.Town;
 import game.Utils.GameTime;
 import game.Utils.InputHandler;
+import game.Utils.Menu.GameMenu;
 import game.Utils.Menu.MainMenu;
 import game.Utils.Menu.Menu;
 
@@ -44,16 +45,27 @@ public class Main {
     }
 
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
+//        GameTime.init();
+//        while (true) {
+//            Menu.println("" + GameTime.getMinutes());
+//            Thread.sleep(1000);
+//        }
+
         do {
             MainMenu.registrationForm();
-            name = InputHandler.getStringInput();
+            //TEST
+//            name = InputHandler.getStringInput();
+            name = "asd";
+            //TEST
         } while (!register(name));
 
         while (game == null) {
             MainMenu.showStartMenu();
-
-            switch (InputHandler.getIntInput()) {
+//TEST
+//            switch (InputHandler.getIntInput()) {
+            switch (1) {
+                //TEST
                 case 1:
                     MainMenu.printFormattedMessage("новая игра началась");
                     game = new MainGame(5, 5);

@@ -18,10 +18,9 @@ public class Battle extends Game {
     private final Hero personHero, computerHero;
     private Unit selectedUnit;
     private boolean isBattleOver;
-    private OwnerType looser;
-    private final Map mainMap;
+    private Hero looser;
 
-    public Battle(int n, int m, Player murderer, Player victim, Hero murdererHero, Hero victimHero, Map mainMap) {
+    public Battle(int n, int m, Player murderer, Player victim, Hero murdererHero, Hero victimHero) {
         super(n, m);
         boolean isPlayerMurderer = murderer.getOwnerType().equals(OwnerType.PERSON);
         this.person = isPlayerMurderer ? murderer : victim;
@@ -29,10 +28,11 @@ public class Battle extends Game {
         this.personHero = isPlayerMurderer ? murdererHero : victimHero;
         this.computerHero = isPlayerMurderer ? victimHero : murdererHero;
         this.battleMap = new BattleMap(n, m, person, computer, personHero, computerHero);
-        this.mainMap = mainMap;
     }
 
-    public OwnerType start() {
+    public boolean getIsBattleOver() {return this.isBattleOver;}
+
+    public Hero start() {
         GameMenu.printFormattedMessage("битва");
 
         battleMap.render();
@@ -48,10 +48,8 @@ public class Battle extends Game {
 
     protected void setBattleEnded(Player killedPlayer, Hero killedHero) {
         killedPlayer.kill(killedHero);
-        mainMap.kill(killedHero.getY(), killedHero.getX());
         isBattleOver = true;
-        looser = killedPlayer.getOwnerType();
-        GameMenu.printFightEnd(looser);
+        looser = killedHero;
     }
 
     private Unit selectUnit() {
@@ -185,19 +183,19 @@ public class Battle extends Game {
         int y = unit.getY();
         int x = unit.getX();
 
-        HashMap<String, int[]> nearby = checkEnemies(y, x, battleMap, OwnerType.COMPUTER, Math.max(3, unit.getFightDist() + 1));
-        int[] enemyCoords = nearby.get("enemy");
-
-        if (enemyCoords != null) {
-            GameMenu.println("Двигается к игроку");
-            int[] newPos = getDirectionToPosition(y, x, enemyCoords[0], enemyCoords[1]);
-            if (battleMap.isCellAvailable(newPos[0], newPos[1], false)) {
-                setEntityPos(unit, battleMap, new int[]{y, x});
-            }
-        } else {
-            GameMenu.println("Двигается рандомно");
-            move(unit, battleMap, true);
-        }
+//        HashMap<String, int[]> nearby = checkEnemies(y, x, battleMap, OwnerType.COMPUTER, Math.max(3, unit.getFightDist() + 1));
+//        int[] enemyCoords = nearby.get("enemy");
+//
+//        if (enemyCoords != null) {
+//            GameMenu.println("Двигается к игроку");
+//            int[] newPos = getDirectionToPosition(y, x, enemyCoords[0], enemyCoords[1]);
+//            if (battleMap.isCellAvailable(newPos[0], newPos[1], false)) {
+//                setEntityPos(unit, battleMap, new int[]{y, x});
+//            }
+//        } else {
+        GameMenu.println("Двигается рандомно");
+        move(unit, battleMap, true);
+//        }
     }
 
     private void attack(Unit murderer, Unit victim) {
@@ -218,6 +216,8 @@ public class Battle extends Game {
 
             killedHero.kill(victim);
             battleMap.kill(victim.getY(), victim.getX());
+
+            if (victim.equals(selectedUnit)) selectedUnit = null;
 
             if (killedHero.getUnitsCount() == 0) {
                 setBattleEnded(killedPlayer, killedHero);
@@ -248,14 +248,6 @@ public class Battle extends Game {
 
                         recruit.reverseOwner();
                         battleMap.reverseCellOwner(recruit.getPos());
-
-                        for (int i = 0; i < person.getHeroes().size(); i++) {
-                            person.getHeroes().get(i).display();
-                        }
-
-                        for (int i = 0; i < computer.getHeroes().size(); i++) {
-                            computer.getHeroes().get(i).display();
-                        }
 
                         return;
                     } else {

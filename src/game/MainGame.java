@@ -15,6 +15,7 @@ import game.Utils.Menu.GameMenu;
 import game.Utils.Menu.MainMenu;
 
 import static game.Main.saveGame;
+import static game.Utils.Menu.GameMenu.busyPersonMessage;
 import static game.Utils.Menu.GameMenu.chooseMapSave;
 
 public class MainGame extends Game {
@@ -57,8 +58,11 @@ public class MainGame extends Game {
     }
 
     private boolean userWantsToLoadSave() {
-        chooseMapSave();
-        return InputHandler.getIntInput() == 1;
+        //TEST
+//        chooseMapSave();
+//        return InputHandler.getIntInput() == 1;
+        return false;
+        //TEST
     }
 
     private void createNewMap() {
@@ -105,9 +109,8 @@ public class MainGame extends Game {
         person.getHeroes().forEach(i -> i.addUnit(new Unit(UnitType.SWORDSMAN, person)));
 
         computer.addHero(new Hero(HeroType.KNIGHT, computer));
-        computer.getHeroes().forEach(i -> i.addUnit(new Unit(UnitType.RASCAL, computer)));
-//        computer.getHeroes().forEach(i -> i.addUnit(new Unit(UnitType.PALADIN, OwnerType.COMPUTER)));
-//        computer.getHeroes().forEach(i -> i.addUnit(new Unit(UnitType.SPEARMAN, OwnerType.COMPUTER)));
+        computer.getHeroes().forEach(i -> i.addUnit(new Unit(UnitType.PALADIN, computer)));
+        computer.getHeroes().forEach(i -> i.addUnit(new Unit(UnitType.SPEARMAN, computer)));
         //TEST
         gameMap.setHeroes(0, 0, person);
         gameMap.setHeroes(n - 1, m - 1, computer);
@@ -121,23 +124,10 @@ public class MainGame extends Game {
         gameMap.render();
 
         while (turnsInCastle >= 0) {
-            if (person.isBusy()) {
-                Customer currentCustomer = person.getCustomer();
-                GameMenu.println("У вас сейчас " + currentCustomer.getServiceName() + ". Осталось еще " + GameTime.formatMinutes(currentCustomer.getRemains()));
-                GameMenu.println("Введите 10 чтобы войти в замок или любое другое число для пропуска хода");
-                int selected = InputHandler.getIntInput();
-                if (person.isBusy()) {
-                    if (selected == 10) {
-                        enterCastle();
-                    } else GameMenu.println("Ход пропущен.");
-                }
-            }
-            if (!person.isBusy()) {
-                personTurn();
-                gameMap.render();
-                if (checkGameOver(computer)) {
-                    break;
-                }
+            personTurn();
+            gameMap.render();
+            if (checkGameOver(computer)) {
+                break;
             }
 
             computerTurn();
@@ -199,6 +189,10 @@ public class MainGame extends Game {
 
     //PERSON TURN
     private void personTurn() {
+        if(person.isBusy()) {
+            busyPersonMessage(person);
+        }
+
         boolean canAtack = false, canInvade = false;
         while (selectedHero == null) {
             selectedHero = personSelectHero();
@@ -325,17 +319,17 @@ public class MainGame extends Game {
         setStatus(GameStatus.BATTLE);
         Hero murdererHero = murderer.getHeroByCords(murdererCords);
         Hero victimHero = victim.getHeroByCords(victimCords);
-        battle = new Battle(n, m, murderer, victim, murdererHero, victimHero, gameMap);
+        battle = new Battle(n, m, murderer, victim, murdererHero, victimHero);
         status = GameStatus.BATTLE;
-        OwnerType looser = battle.start();
-        if (looser == OwnerType.PERSON) selectedHero = null;
+        continueBattle(); // Start
         status = GameStatus.MAINGAME;
         saveGame(true);
     }
 
     private void continueBattle() {
-        OwnerType looser = battle.start();
-        if (looser == OwnerType.PERSON) selectedHero = null;
+        Hero looser = battle.start();
+        gameMap.kill(looser.getY(), looser.getX());
+        if (looser.getOwnerType() == OwnerType.PERSON) selectedHero = null;
     }
     //BATTLE
 
