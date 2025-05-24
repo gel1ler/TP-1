@@ -85,7 +85,6 @@ public class GameMenu extends Menu {
     public static void busyPersonMessage(Player person){
         Customer currentCustomer = person.getCustomer();
         GameMenu.println("У вас сейчас " + currentCustomer.getServiceName() + ". Осталось еще " + GameTime.formatMinutes(currentCustomer.getRemains()));
-        GameMenu.println("Введите 10 чтобы войти в замок или любое другое число для пропуска хода");
     }
 }
 

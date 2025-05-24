@@ -58,7 +58,7 @@ public class Player implements Serializable {
     }
 
     public void minusGold(int gold) {
-        this.gold -= gold;
+        this.gold = Math.max(this.gold - gold, 0);
     }
 
     public boolean canAfford(Buy item) {

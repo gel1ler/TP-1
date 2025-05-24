@@ -89,16 +89,20 @@ public abstract class TownBuilding extends Shop<Service> {
         }
     }
 
-    public void startBattle(Player person) {
+    private Player chooseRandomNpcHero(){
         List<Player> npcsInQueue = queue.stream()
                 .filter(p -> p.getOwnerType() != OwnerType.PERSON) // Только NPC
                 .toList();
-        Player npc = npcsInQueue.get(new Random().nextInt(npcsInQueue.size()));
+        return npcsInQueue.get(new Random().nextInt(npcsInQueue.size()));
+    }
+
+    public void startBattle(Player person) {
+        Player randNpc = chooseRandomNpcHero();
 
         Hero personHero = person.getHeroes().getFirst();
-        Hero npcHero = npc.getHeroes().getFirst();
+        Hero npcHero = randNpc.getHeroes().getFirst();
 
-        Battle battle = new  Battle(5, 5, person, npc, personHero, npcHero);
+        Battle battle = new Battle(5, 5, person, randNpc, personHero, npcHero);
         Hero looser = battle.start();
 
         while (!battle.getIsBattleOver()) {
@@ -111,11 +115,15 @@ public abstract class TownBuilding extends Shop<Service> {
         }
 
         if (looser.getOwnerType() != OwnerType.PERSON) {
-            queue.remove(npc);
-            BuildingMenu.println("Вы победили " + npc.getName() + "! Он покидает очередь.");
+            queue.remove(randNpc);
+            BuildingMenu.println("Вы победили " + randNpc.getName() + "! Он покидает очередь.");
+            randNpc.minusGold(20);
+            person.plusGold(20);
         } else {
             queue.remove(person);
-            BuildingMenu.println("Вы проиграли " + npc.getName() + " и покидаете очередь.");
+            BuildingMenu.println("Вы проиграли " + randNpc.getName() + " и покидаете очередь.");
+            person.minusGold(20);
+            randNpc.plusGold(20);
         }
     }
 

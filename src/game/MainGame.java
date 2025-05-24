@@ -188,9 +188,27 @@ public class MainGame extends Game {
 
 
     //PERSON TURN
+    private void waitServiceEnd() {
+        int i = 0;
+        while (person.isBusy()) {
+            try {
+                i++;
+                if (i > 5) {
+                    busyPersonMessage(person);
+                    i = 0;
+                }
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return;
+            }
+        }
+    }
+
     private void personTurn() {
-        if(person.isBusy()) {
+        if (person.isBusy()) {
             busyPersonMessage(person);
+            waitServiceEnd();
         }
 
         boolean canAtack = false, canInvade = false;

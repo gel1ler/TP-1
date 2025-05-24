@@ -58,13 +58,8 @@ public class NpcManager {
     private static void visitRandomBuilding(Npc npc) {
         TownBuilding building = townBuildings.get(random.nextInt(townBuildings.size()));
 
-//        List<Service> services = building.getAvailableItems();
-
-//        Service service = services.get(random.nextInt(services.size()));
-
         freeNpcs.remove(npc);
         building.enter(npc, true);
-//        building.interact(npc, service, () -> freeNpcs.add(npc));
     }
 
     public static void stop() {
